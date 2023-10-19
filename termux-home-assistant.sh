@@ -91,7 +91,7 @@ do_install() {
 
   pkg i tsu python nano termux-api make libjpeg-turbo make git rust python-cryptography libcrypt libffi binutils mosquitto wget libsodium python-numpy $APT_INSTALL_FLAGS
 
-  dpkg -i ./contrib/ffmpeg_5.1.2-7_aarch64.deb || true
+#  dpkg -i ./contrib/ffmpeg_5.1.2-7_aarch64.deb || true
   apt install -f $APT_INSTALL_FLAGS
 
   rm -f "$PREFIX/etc/apt/apt.conf.d/99-ha-unattended"
@@ -107,7 +107,7 @@ do_install() {
   pip install setuptools
   MATHLIB=m pip install aiohttp_cors==0.7.0
   MATHLIB=m pip install PyTurboJPEG==1.6.7
-  dpkg -i $script_dir/contrib/python-numpy_1.23.2_aarch64.deb || true
+#  dpkg -i $script_dir/contrib/python-numpy_1.23.2_aarch64.deb || true
   apt install -f $APT_INSTALL_FLAGS
 
   pip install git+https://github.com/amitdev/lru-dict@5013406c409a0a143a315146df388281bfb2172d
