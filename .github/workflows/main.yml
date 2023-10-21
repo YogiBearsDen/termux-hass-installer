@@ -7,7 +7,7 @@ on:
 
 jobs:
   linux_test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, gpu,ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v3
       - name: "find env"
