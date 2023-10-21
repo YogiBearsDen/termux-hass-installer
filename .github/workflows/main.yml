@@ -1,28 +1,53 @@
-name: Publish
+name: main
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 
 jobs:
-  build:
-    name: Publish binaries
+  linux_test:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --release
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_name: termux-hass-installer
-        # A personal access token for the GitHub repository in which the release will be created and edited.
-        # It is recommended to create the access token with the following scopes: `repo, user, admin:repo_hook`.
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/release/remote-install.sh
-        asset_name: remote-install.sh
-        tag: ${{ github.ref }}
-        overwrite: true
-        body: "This is my release text"
+      - uses: actions/checkout@v3
+      - name: "find env"
+        run: |
+          set | grep GITHUB_ | grep -v GITHUB_TOKEN
+          *.sh
+          mkdir -p test/subdir
+          echo "$(openssl rand -hex 6)" > "test/subdir/random-name-linux-$(openssl rand -hex 6).txt"
+          echo "$(openssl rand -hex 6)" > "test/subdir/random-name-linux-$(openssl rand -hex 6).txt"
+          echo "$(openssl rand -hex 6)" > "test/subdir/absulote-path-test-linux.txt"
+      - uses: xresloader/upload-to-github-release@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: "*.md;*.zip;test/subdir/random-name-linux-*.txt;${{ github.workspace }}/test/subdir/absulote-path-test-linux.txt"
+          delete_file: "*linux*.txt"
+          branches: "main;dev"
+          verbose: true
+          prerelease: true
+          default_release_name: "Test release name for main branch"
+  windows_test:
+    runs-on: windows-latest
+    needs: [linux_test]
+    steps:
+      - uses: actions/checkout@v3
+      - name: "find env"
+        shell: bash
+        run: |
+          set | grep GITHUB_ | grep -v GITHUB_TOKEN
+          mkdir -p test/subdir
+          echo "$(openssl rand -hex 6)" > "test/subdir/random-name-windows-$(openssl rand -hex 6).txt"
+          echo "$(openssl rand -hex 6)" > "test/subdir/random-name-windows-$(openssl rand -hex 6).txt"
+          echo "$(openssl rand -hex 6)" > "test/subdir/absulote-path-test-windows.txt"
+      - uses: xresloader/upload-to-github-release@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: "test\\subdir\\random-name-windows-*.txt;${{ github.workspace }}\\test\\subdir\\absulote-path-test-windows.txt"
+          delete_file: "*windows*.txt"
+          branches: "main;dev"
+          verbose: true
+          prerelease: true
+          default_release_name: "Test release name for main branch"
